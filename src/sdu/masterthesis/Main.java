@@ -95,4 +95,28 @@ public class Main {
         HashSet<Object> tmpSet = new HashSet<>(listToCount);
         return listToCount.size()  - tmpSet.size();
     }
+
+    // Base62 encoding algorithm
+    private String encodeBase62(long n) {
+
+        final String base62Chars = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+        StringBuilder builder = new StringBuilder();
+
+        //NOTE:  Appending builds a reverse encoded string.  The most significant value
+        //is at the end of the string.  You could prepend(insert) but appending
+        // is slightly better performance and order doesn't matter here.
+
+        //perform the first selection using unsigned ops to get negative
+        //numbers down into positive signed range.
+        long index = Long.remainderUnsigned(n, 62);
+        builder.append(base62Chars.charAt((int) index));
+        n = Long.divideUnsigned(n, 62);
+        //now the long is unsigned, can just do regular math ops
+        while (n > 0) {
+            builder.append(base62Chars.charAt((int) (n % 62)));
+            n /= 62;
+        }
+        return builder.toString();
+    }
 }
